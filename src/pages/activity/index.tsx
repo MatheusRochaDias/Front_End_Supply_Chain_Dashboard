@@ -37,7 +37,7 @@ const createActivityScheme = yup.object().shape({
     .number()
     .required('Quantidade obrigatória!')
     .typeError('Somente números'),
-    dataEvento: yup
+  dataEvento: yup
     .string()
     .required('Local obrigatório!'),
 
@@ -76,7 +76,7 @@ export default function Activity() {
     else {
       setValue("tipoMovimentacao", "Saída")
     }
-      try {
+    try {
       const response = await createActivity(data)
       console.log(response)
       toast({
@@ -121,7 +121,7 @@ export default function Activity() {
       setValue("local", matchingProduct.local)
       setQuantidade(matchingProduct.quantidade)
     }
-  }, [dataAllProducts?.paginatedData, getValues, selectedProduct, setValue]);
+  }, [dataAllProducts?.paginatedData, getValues, selectedProduct, setSelectedProduct, setValue]);
 
   return (
     <Box>
@@ -238,8 +238,10 @@ export default function Activity() {
                   name="produto.registerNumber"
                   value={selectedProduct}
                   onChange={(event: any) => {
-                    setSelectedProduct(event.target.value),
-                      setValue('produto.register_Number', event.target.value)
+                    setSelectedProduct(prevState => {
+                      setValue('produto.register_Number', event.target.value);
+                      return event.target.value
+                    })
                   }}
                 > {dataAllProducts.paginatedData.map((item, idx) => (
                   <>

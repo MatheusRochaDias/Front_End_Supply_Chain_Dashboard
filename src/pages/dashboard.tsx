@@ -195,23 +195,23 @@ export default function Dashboard() {
 
   }, [reportActivity]);
 
+  const [splitDate, setSplitDate] = useState<String[]>(["", ""])
+  
 
-  function handleSelectedDateClick
-    () {
+  useEffect(() => {
     const date = selectedDate;
     const [firstPart, secondPart] = date.split('-').map(part => part.replace('-', ''));
-    console.log(firstPart, secondPart);
+    console.log(firstPart, secondPart,"AFAEFAE");
     setSplitDate([firstPart, secondPart])
-      
-  }
-
-  const [splitDate, setSplitDate] = useState<String[]>(["", ""])
-  const { data: selectToreportActivity } = useQuery([selectedDate, handleSelectedDateClick, , 'getAllProducts'], () => GetActivityReportByDate(1, Number(splitDate[1]), Number(splitDate[0])), {
+  }, [selectedDate])
+  
+  console.log(splitDate,"CV")
+  const { data: selectToreportActivity } = useQuery([selectedDate, splitDate, , 'getAllProducts'], () => GetActivityReportByDate(1, Number(splitDate[1]), Number(splitDate[0])), {
     staleTime: 1000 * 60, // 1 minute
     refetchOnWindowFocus: true
   });
 
-  console.log(selectToreportActivity, "BV")
+ 
   const [meuArray, setMeuArray] = useState<string[] | undefined>(undefined);
 
 
@@ -324,7 +324,10 @@ export default function Dashboard() {
                   name="selectedDate"
                   value={selectedDate}
                   onChange={(event: any) => {
-                    setSelectedDate(event.target.value)
+                    setSelectedDate(prevState => {
+                      console.log(event.target.value);
+                      return event.target.value;
+                    })
                   }}
                 > {months.map((item, idx) => (
                   <option key={idx} value={item}>{item}</option>
@@ -332,8 +335,7 @@ export default function Dashboard() {
                 </Select>
               </Stack>
             </DarkMode>
-
-            <Button size="lg" mt="6" onClick={handleSelectedDateClick} colorScheme="cyan"> Download</Button>
+             <MyPDFComponent disabled={selectedDate} incomeData={selectToreportActivity?.paginatedData} />
           </Stack> : <Center>
             <Loading />
           </Center>}
